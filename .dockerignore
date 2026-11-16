@@ -1,0 +1,15 @@
+.git
+**/.env
+**/.env.*
+**/.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+**/*.db
+**/*.db-*
+**/*.sqlite*
+**/*.log
+.agents
+.codex
+.vscode

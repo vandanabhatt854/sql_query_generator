@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 
 router = APIRouter(prefix='/auth')
-AUTH_DB = Path(__file__).resolve().parent.parent / 'accounts.db'
+AUTH_DB = Path(os.getenv('DATA_DIR', str(Path(__file__).resolve().parent.parent))) / 'accounts.db'
 COOKIE = 'querygenie_session'
 TTL = 8 * 60 * 60
 
@@ -32,7 +32,11 @@ def connect():
 
 
 def allowed_origins():
-    return [s.strip() for s in os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',') if s.strip()]
+    origins = [s.strip() for s in os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',') if s.strip()]
+    hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+    if hostname:
+        origins.append('https://' + hostname)
+    return origins
 
 
 def check_origin(request):

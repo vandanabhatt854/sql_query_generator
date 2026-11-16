@@ -131,3 +131,29 @@ Final checks: `backend/.venv/Scripts/python.exe -m unittest discover -s backend/
 and `npm.cmd run build` from `frontend`. API tests use isolated temporary databases
 and mocked AI responses, without sending project data to a provider. Live Gemini
 was verified separately with schema metadata and an approved sample request.
+
+## Deploy to Render
+
+This repository includes a multi-stage `Dockerfile` and a `render.yaml` Blueprint.
+The container builds React, serves the frontend and FastAPI from the same origin,
+and routes API calls through `/api`. `/healthz` is the deployment health endpoint.
+SPA routes such as `/history` and `/login` work on direct navigation/refresh.
+
+1. Connect the GitHub repository in Render and create a Blueprint from `render.yaml`.
+2. Set `GOOGLE_API_KEY` in Render's secret environment settings using a new key.
+   Never add the key to `render.yaml`, Docker build arguments or Git.
+3. Deploy the service and open the HTTPS URL returned by Render.
+
+The Blueprint explicitly selects a free demo instance. Its local SQLite accounts
+and history can reset on service restart/redeploy; the synthetic demo rows are
+seeded on startup. For retained data, explicitly approve/select a paid plan and
+attach a persistent disk mounted at `/app/data` (`DATA_DIR`). Do not use the free
+instance for permanent user data. Secure session cookies are enabled by default
+on Render; the Render HTTPS hostname is automatically allowed for auth origins.
+
+For another Docker host, expose `$PORT` (default 8000), set `COOKIE_SECURE=True`
+behind HTTPS, configure `ALLOWED_ORIGINS` to the exact site URL, and mount storage
+at `/app/data` if retaining SQLite data. Run one process/instance for this SQLite
+demo. The image excludes `.env`, keys, local databases and development dependencies.
+Docker image building must be verified by the hosting provider if Docker is not
+available locally.

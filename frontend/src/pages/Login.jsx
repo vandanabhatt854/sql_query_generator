@@ -1,16 +1,8 @@
-import React from 'react';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-
-export default function Login() {
-  return (
-    <div className="auth-page">
-      <h2>Login</h2>
-      <form>
-        <Input label="Email" type="email" name="email" />
-        <Input label="Password" type="password" name="password" />
-        <Button type="submit">Sign In</Button>
-      </form>
-    </div>
-  );
+import React, {useState} from 'react';
+import {Link,useNavigate} from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+export default function Login({register=false}) {
+ const [error,setError]=useState(''); const [busy,setBusy]=useState(false); const {signIn,signUp}=useAuth(); const navigate=useNavigate();
+ async function submit(e){e.preventDefault();setBusy(true);setError(''); const values=Object.fromEntries(new FormData(e.currentTarget));try{await (register ? signUp(values):signIn(values));navigate('/dashboard');}catch(err){const detail=err.response?.data?.detail;setError(typeof detail==='string'?detail:'Unable to sign in. Check the form and try again.');}finally{setBusy(false);}}
+ return <main className="utility-page"><section className="panel auth-card"><h1>{register?'Create account':'Sign in'}</h1><p>Local demo account. Query data is shared on this computer.</p><form onSubmit={submit}>{register && <label>Name<input name="name" required maxLength={100} autoComplete="name"/></label>}<label>Email<input name="email" type="email" required maxLength={254} autoComplete="email"/></label><label>Password<input name="password" type="password" required minLength={8} maxLength={128} autoComplete={register?'new-password':'current-password'}/></label>{error && <p role="alert" className="error-banner">{error}</p>}<button className="primary-button" disabled={busy}>{busy?'Please wait...':register?'Create account':'Sign in'}</button></form><p><Link to={register?'/login':'/register'}>{register?'Already registered? Sign in':'Create a local account'}</Link></p></section></main>;
 }

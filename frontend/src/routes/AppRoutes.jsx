@@ -11,19 +11,21 @@ import SchemaViewer from '../pages/SchemaViewer';
 import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
+import DemoNav from '../components/layout/DemoNav';
 
 export default function AppRoutes() {
   return (
     <Router>
+      <DemoNav />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/query-generator" element={<ProtectedRoute><QueryGenerator /></ProtectedRoute>} />
-        <Route path="/history" element={<ProtectedRoute><QueryHistory /></ProtectedRoute>} />
+        <Route path="/query-generator" element={<QueryGenerator />} />
+        <Route path="/history" element={<QueryHistory />} />
         <Route path="/results" element={<ProtectedRoute><QueryResults /></ProtectedRoute>} />
-        <Route path="/schema" element={<ProtectedRoute><SchemaViewer /></ProtectedRoute>} />
+        <Route path="/schema" element={<SchemaViewer />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,4 +1,5 @@
 import re
+import sqlparse
 from sqlalchemy import text
 
 
@@ -10,7 +11,7 @@ class QueryExecutionAgent:
     def execute(self, sql: str):
         lower = sql.lower().strip()
         with self.engine.begin() as conn:
-            if lower.startswith("select"):
+            if sqlparse.parse(sql)[0].get_type() == 'SELECT':
                 res = conn.execute(text(sql))
                 rows = [dict(r._mapping) for r in res.fetchall()]
                 return {"success": True, "rows": rows, "rows_affected": 0, "error": None}
